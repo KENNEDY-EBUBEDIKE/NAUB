@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta name="revisit-after" content="1">x
+    <meta name="keywords" content="windows, linux, macintosh, solaris, freebsd">
+    <meta name="robots" content="index, follow">
+    <meta name="HandheldFriendly" content="true" />
+    <link rel="shortcut icon" type="image/jpg" href="{% static 'dashboard/imgs/naub.png' %}"/>
+    <link rel="stylesheet" href="{% static 'scan_profile/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'scan_profile/css/bootstrap.min.css' %}">
+    <script src="{% static 'dashboard/js/jquery3.5.1.min.js' %}" rel="script"></script>
+    <title>NAUB</title>
+</head>
+<body>
+    <main>
+        <nav class="navbar navbar-expand" aria-label="Second navbar example">
+            <div class="container">
+                <img src="{% static 'scan_profile/img/naub.png' %}" alt="" class="img1">
+              <a class="navbar-brand" href="#">NIGERIAN ARMY UNIVERSITY BIU</a>
+              <img src="{% static 'scan_profile/img/army_logo.png' %}" alt="" class="img1">
+            </div>
+        </nav>
+
+
+        <br>
+        <div class="container">
+            <button class="btn btn-success" id="scan_btn" onclick="start(this)"> Scan</button>
+            <div class="row card-header" style="background-color:white;">
+                <h4 class="head-text">
+                    <span id="surname">{{student.surname}}</span>
+                    <span id="first_name">{{student.first_name}}</span>
+                    <span id="other_name">{{student.other_name}}</span>
+                </h4>
+            </div>
+        </div><br>
+
+        <div class="row">
+            {% if student.is_flaged != None %}
+            <div class="col-md-12">
+                <div class="profile-img">
+                    <img src="" alt="" style="margin-left: 50mm"/>
+                    <span style="font-size:180px; margin-left: 30mm; font-weight:bolder; color:red">X</span>
+                    <span style="font-weight:bold; font-size:30px;"></span> <span style="color:red"><span id="reason"></span> REASON</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-md-8">
+                <div class="profile-img">
+                    <img id="photo" src="" alt=""/>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <br><br><br>
+        <div class="container ">
+            <div class="col-md-12 d-flex justify-content-center">
+                <table class="table table-borderless table-responsive-sm " style="text-align: center;  width: fit-content ; mso-cellspacing: 0">
+                <thead>
+                    <tr>
+                        <th>MATRIC NUMBER</th>
+                        <th>DEPARTMENT</th>
+                        <th>LEVEL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="matric_number"></td>
+                        <td id="department"></td>
+                        <td id="level"></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </main> {% csrf_token %}
+
+<script>
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    </script>
+
+    <script>
+      function start(btn){
+        event.preventDefault()
+        btn.style.display = 'none';
+        connectSerial()
+        let port, textEncoder, writableStreamClosed, writer;
+
+        async function connectSerial() {
+            try {
+                // Prompt user to select any serial port.
+                port = await navigator.serial.requestPort();
+                await port.open({ baudRate: "9600" });
+                listenToPort();
+
+                textEncoder = new TextEncoderStream();
+                writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
+
+                writer = textEncoder.writable.getWriter();
+            } catch (e){
+                alert(e + "Serial Connection Failed");
+            }
+        }
+        let v = "";
+        async function listenToPort() {
+            const textDecoder = new TextDecoderStream();
+            const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+            const reader = textDecoder.readable.getReader();
+
+            // Listen to data coming from the serial device.
+            while (true) {
+                let { value, done } = await reader.read();
+                if (done) {
+                    // Allow the serial port to be closed later.
+                    {#reader.releaseLock();#}
+                    break;
+                }
+                // value is a string.
+                var newLine = /\r\n|\r|\n/.exec(value);
+
+                if (newLine){
+                    v += value;
+
+                    v.replace(/\r\n|\n|\r|\s/g, "")
+                    if (!v.replace(/\r\n|\n|\r|\s/g, "").length) {
+                      console.log("string only contains whitespace (ie. spaces, tabs or line breaks)");
+                    }else {
+                        if (v.length > 3){
+                            console.log(v)
+                            makeRequest(v.toString())
+                        }
+                    }
+                    v = "";
+                }else{
+                    v += value;
+                }
+            }
+        }
+        async function sendSerialLine(data) {
+            await writer.write(data);
+            //await writer.releaseLock();
+        }
+
+        function makeRequest(value){
+            $.ajax({
+                url: "/scan-profile/",
+                type: 'POST',
+                data: {"rfid_code": value, "current_exam":"EEE315"},
+                dataType: "json",
+                headers: {'X-CSRFToken': csrftoken},
+                mode: 'same-origin',
+                success: function (response){
+                    if (response.success){
+                        if (!response.is_staff){
+                            document.getElementById("surname").textContent = response.student.surname
+                            document.getElementById("first_name").textContent = response.student.first_name
+                            document.getElementById("other_name").textContent = response.student.other_name
+                            document.getElementById("matric_number").textContent = response.student.matric_number
+                            document.getElementById("photo").src = response.student.photo
+                            document.getElementById("department").textContent = response.student.department
+                            document.getElementById("level").textContent = response.student.level
+                        } else if( response.is_staff){
+                            document.getElementById("surname").textContent = response.staff.surname
+                            document.getElementById("first_name").textContent = response.staff.first_name
+                            document.getElementById("other_name").textContent = response.staff.other_name
+                            document.getElementById("department").textContent = response.staff.department
+                            document.getElementById("matric_number").textContent = response.staff.staff_id_number
+                            document.getElementById("photo").src = response.staff.photo
+                        }
+                    }else if(!response.success){
+                        alert(response.message)
+                    }
+                }
+            })
+        }
+      }
+    </script>
+
+</body>
+</html>

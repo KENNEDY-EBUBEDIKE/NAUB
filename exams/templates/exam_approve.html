@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+{% load static %}
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <meta name="revisit-after" content="1">x
+        <meta name="keywords" content="windows, linux, macintosh, solaris, freebsd">
+        <meta name="robots" content="index, follow">
+        <meta name="HandheldFriendly" content="true" />
+        <link rel="shortcut icon" type="image/jpg" href="{% static 'dashboard/imgs/naub.png' %}"/>
+        <title>Exam Control Center</title>
+
+
+        <!-- Bs -->
+        <link href="{% static 'exam_approve/css/bootstrap.me.css' %}" rel="stylesheet" />
+        <!-- Animate -->
+         <link rel="stylesheet" href="{% static 'student_registration/css/animate.min.css' %}"/>
+
+        <!-- Jquery JS-->
+        <script src="{% static 'exam_approve/vendor/jquery/jquery.min.js' %}"></script>
+        <script src="{% static 'exam_approve/js/font.all.min.js' %}" rel="script" ></script>
+
+        <!-- Sweet Alert -->
+        <link href="{% static 'student_registration/css/sweetalert/sweetalert-borderless.css' %}" rel="stylesheet">
+        <script src="{% static 'student_registration/js/sweetalert2.min.js' %}"></script>
+
+        <!-- Vendor CSS-->
+        <link href="{% static 'exam_approve/vendor/select2/select2.min.css' %}" rel="stylesheet" media="all">
+        <link href="{% static 'exam_approve/vendor/datepicker/daterangepicker.css' %}" rel="stylesheet" media="all">
+
+        <style>
+
+            @media only screen and (max-width: 800px) {
+
+                .uname strong{
+                    display: none;
+                }
+            }
+
+        </style>
+
+        <style>
+            .body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            .bu{
+
+            }
+
+            /* The Modal (background) */
+            .modal {
+              display: none; /* Hidden by default */
+              position: fixed; /* Stay in place */
+              z-index: 1; /* Sit on top */
+              padding-top: 100px; /* Location of the box */
+              left: 0;
+              top: 0;
+              width: 100%; /* Full width */
+              height: 100%; /* Full height */
+              overflow: auto; /* Enable scroll if needed */
+              background-color: rgb(0,0,0); /* Fallback color */
+              background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* Modal Content */
+            .modal-content {
+              position: relative;
+              background-color: #fefefe;
+              margin: auto;
+              padding: 0;
+              border: 1px solid #888;
+              width: 30%;
+              box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+              -webkit-animation-name: animatetop;
+              -webkit-animation-duration: 0.4s;
+              animation-name: animatetop;
+              animation-duration: 0.4s
+            }
+
+            /* Add Animation */
+            @-webkit-keyframes animatetop {
+              from {top:-300px; opacity:0}
+              to {top:0; opacity:1}
+            }
+
+            @keyframes animatetop {
+              from {top:-300px; opacity:0}
+              to {top:0; opacity:1}
+            }
+
+            /* The Close Button */
+            .close {
+              color: white;
+              float: right;
+              font-size: 28px;
+              font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+              color: #000;
+              text-decoration: none;
+              cursor: pointer;
+            }
+
+            .modal-header {
+              padding: 2px 16px;
+              background-color: #1c3c3c;
+              color: white;
+            }
+
+            .modal-body {padding: 2px 16px;}
+
+            .modal-footer {
+              padding: 2px 16px;
+              background-color: #1c3c3c;
+              color: white;
+            }
+        </style>
+    </head>
+
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand" style="background: #1C3C3C; height: auto; color: white;">
+            <a class="navbar-brand" href="#" style="color: #ffffff; font-size: 20px;">
+                <img src="{% static 'dashboard/imgs/naub.png' %}" style="width: 50px; height: 50px; border-radius: 50%;" alt=""> ADMIN STAFF
+            </a>
+            <button class="btn btn-link btn-sm order-1 order-lg-0" style="color: white; font-size: 22px;" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
+
+            <!-- Navbar-->
+            <ul class="navbar-nav ml-auto ml-md-0" style="right: 3px; position: absolute;">
+                <li class="nav-item">
+                    <div class="nav-link" style="color: white; font-size: 18px;">
+                        {% if request.user.privilege == 1 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: FIRST CLASS
+                        {% elif request.user.privilege == 2 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: SECOND CLASS
+                        {% elif request.user.privilege == 3 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: THIRD CLASS
+                        {% elif request.user.privilege == 4 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: FOURTH CLASS
+                        {% elif request.user.privilege == 5 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: FIFTH CLASS
+                        {% endif %}
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle uname" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        style="color: white; font-size: 18px;">
+                        <i class="fas fa-envelope fa-fw"></i> {{request.user.email}}
+                        <i class="fas fa-user fa-fw"></i> <strong>{{request.user.profile.surname}}  {{request.user.profile.first_name}}</strong>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="#">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/users/logout">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading"></div>
+                            <a class="nav-link" href="/users/dashboard">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Dashboard
+                            </a>
+                            <div class="sb-sidenav-menu-heading">Interface</div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdmin" aria-expanded="false" aria-controls="collapseAdmin">
+                                <div class="sb-nav-link-icon"><i class="fas fa-address-card"></i></div>
+                                Manage Admin
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseAdmin" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege == 1 %}
+                                        <a class="nav-link" href="/users/admin-database">View Admin Database</a>
+                                    {% endif %}
+
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseStudent" aria-expanded="false" aria-controls="collapseStudent">
+                                <div class="sb-nav-link-icon"><i class="fas fa-address-card"></i></div>
+                                Manage Student
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseStudent" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 3 %}
+                                        <a class="nav-link" href="/students/student-database">View student's Database</a>
+                                        <a class="nav-link" href="/students/student-registration">Register students</a>
+                                        <a class="nav-link" href="/students/students-data-upload">Upload Students Data</a>
+                                    {% endif %}
+
+
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsestaff" aria-expanded="false" aria-controls="collapsestaff">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                                Manage Staff
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsestaff" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 2 %}
+                                        <a class="nav-link" href="/staff/staff-database">View staff Database</a>
+                                        <a class="nav-link" href="/staff/staff-registration">Register staff</a>
+                                        <a class="nav-link" href="/staff/staff-attendance-sheet">Staff Work Attendance</a>
+                                    {% endif %}
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCourses" aria-expanded="false" aria-controls="collapseCourses">
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                                Manage Courses
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseCourses" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 3 %}
+                                        <a class="nav-link" href="/students/courses-database">View Courses Database</a>
+                                        <a class="nav-link" href="/students/add-course">Add Courses</a>
+                                    {% endif %}
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseControl" aria-expanded="false" aria-controls="collapseControl">
+                                <div class="sb-nav-link-icon"><i class="fas fa-diagnoses"></i></div>
+                                Exam Control Center
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseControl" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 2 %}
+                                        <a class="nav-link" href="/exams/approve-exam">Approve Exam Requests</a>
+                                        <a class="nav-link" href="/exams/invigilator-attendance">Invigilator Attendance Sheet</a>
+                                        <a class="nav-link" href="/exams/request-exam">Request Exam</a>
+                                        <a class="nav-link" href="/exams/attendance">Examination Attendance Sheet</a>
+                                        <a class="nav-link" href="/exams/exam-malpractice">Examination Malpractice</a>
+                                    {% elif request.user.privilege <= 3 %}
+                                        <a class="nav-link" href="/exams/request-exam">Request Exam</a>
+                                        <a class="nav-link" href="/exams/attendance">Examination Attendance Sheet</a>
+                                        <a class="nav-link" href="/exams/exam-malpractice">Examination Malpractice</a>
+                                    {% endif %}
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small">Logged in as:</div>
+                        {{request.user.profile.designation}}
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid">
+                        <h1 class="mt-4">Examination Requests</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item"><a href="/dashboard.html">Dashboard</a></li>
+                            <li class="breadcrumb-item">Exam Requests</li>
+                        </ol>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>REQUEST STATUS</th>
+                                                <th>COURSE</th>
+                                                <th>REQUESTED BY</th>
+                                                <th>REQUEST DATE</th>
+                                                <th>APPROVED START TIME</th>
+                                                <th>APPROVED STOP TIME</th>
+                                                <th>APPROVED BY</th>
+                                                <th>ACTIONS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for exam_request in exam_requests %}
+                                                <div id="myModal-{{exam_request.pk}}" class="modal body">
+                                                  <!-- Modal content -->
+                                                  <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h2>Approve</h2>
+                                                      <span class="close" id="close-{{exam_request.pk}}">&times;</span>
+                                                    </div>
+                                                    <div class="modal-body">
+
+                                                      <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+                                                          <div class="row">
+                                                              <div>
+                                                                  <label for="start_date">Start Date: </label>
+                                                                    <input id="start_date" type="date" name="start_date" required>
+                                                              </div>
+
+                                                              <div>
+                                                                  <label for="start_time">Start Time: </label>
+                                                                    <input id="start_time" type="time" name="start_time" required>
+                                                              </div>
+                                                          </div>
+
+                                                           <div class="form-row">
+                                                                <span>
+                                                                   <label for="stop_date">Stop Date: </label>
+                                                                    <input id="stop_date" type="date" name="stop_date" required>
+                                                                </span>
+
+                                                                <span>
+                                                                   <label for="stop_time">Stop Time: </label>
+                                                                    <input id="stop_time" type="time" name="stop_time" required>
+                                                                </span>
+
+                                                                <div>
+                                                                    <input type="hidden" value="{{exam_request.pk}}" name="rid">
+                                                                </div>
+                                                           </div>
+                                                          <div class="form-row">
+
+                                                                <div class="value">
+                                                                    <div class="rs-select2 js-select-simple select-search">
+                                                                        <label for="invi">Invigilators:</label>
+                                                                        <select id="invi" name="invigilators" multiple required>
+                                                                            <option style="width: max-content;" disabled="disabled" selected="selected" >Add Invigilators</option>
+                                                                            {% for staff in all_staff %}
+                                                                                <option>{{staff.surname}}</option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                        <div class="select-dropdown"></div>
+                                                                    </div>
+                                                                </div>
+                                                          </div>
+
+                                                          <center><button type="submit" class="btn btn-success">Approve</button></center>
+                                                      </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <tr>
+
+                                                    {% if exam_request.status == 'APPROVED' %}
+                                                        <td class="delete-item"><a role="button" class="btn btn-success" ><strong style="color:#ffffff">{{exam_request.status}}</strong></a></td>
+                                                    {% elif exam_request.status == 'PENDING' %}
+                                                        <td><a role="button" class="btn btn-warning" ><strong style="color:white">{{exam_request.status}}</strong></a></td>
+                                                    {% else %}
+                                                        <td><a role="button" class="btn btn-danger"><strong style="color:white">{{exam_request.status}}</strong></a></td>
+                                                    {% endif %}
+
+                                                    <td>{{exam_request.course.course_code}}</td>
+                                                    <td>{{exam_request.requested_by}}</td>
+                                                    <td>{{exam_request.request_date}}</td>
+
+                                                    {% if exam_request.status == 'APPROVED' %}
+                                                        <td style="color:green">{{exam_request.approved_start_time}}</td>
+                                                        <td style="color:red">{{exam_request.approved_stop_time}}</td>
+                                                    {% else %}
+                                                        <td style="color:green">{{exam_request.status}}</td>
+                                                        <td style="color:red">{{exam_request.status}}</td>
+                                                    {% endif %}
+
+                                                    <td>{{exam_request.approved_by}}</td>
+
+                                                    <td>
+                                                        {% if exam_request.status != 'PENDING' %}
+                                                            <a role="button" href="{{exam_request.get_delete_exam_request_url}}" class="btn btn-danger btn-sm">
+                                                                <strong style="color:white">Delete</strong>
+                                                            </a>
+                                                        {% else %}
+                                                            <a role="button" onclick="open_modal(id='{{exam_request.pk}}')" class="btn btn-success btn-sm">
+                                                                <strong style="color:white">APPROVE</strong>
+                                                            </a>
+                                                            <a role="button" href="{{exam_request.get_decline_exam_request_url}}" class="btn btn-danger btn-sm">
+                                                                <strong style="color:white">DECLINE</strong>
+                                                            </a>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; NAUB ICT <a href="#">Naub.edu.ng</a> 2021</div>
+                            <div>
+                                <a href="#">Privacy Policy</a>
+                                &middot;
+                                <a href="#">Terms &amp; Conditions</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <script src="{% static 'exam_approve/js/bootstrap.bundle.min.js' %}" rel="script"></script>
+        <script src="{% static 'exam_approve/js/scripts.js' %}" rel="script"></script>
+        <script src="{% static 'exam_approve/js/jquery.dataTables.min.js' %}" rel="script"></script>
+        <script src="{% static 'exam_approve/js/dataTables.bootstrap4.min.js' %}" rel="script"></script>
+
+
+        <!-- Vendor JS-->
+        <script src="{% static 'exam_approve/vendor/select2/select2.min.js' %}"> </script>
+        <script src="{% static 'exam_approve/js/global.js' %}"></script>
+
+        <script>
+            function open_modal(id) {
+                // Get the modal
+                var modal = document.getElementById('myModal-'+id);
+
+                // Get the <span> element that closes the modal
+                var span = document.getElementById('close-'+id);
+
+                // When the user clicks the button, open the modal
+                modal.style.display = "block";
+
+
+                // When the user clicks on <span> (x), close the modal
+                span.onclick = function() {
+                  modal.style.display = "none";
+                }
+
+                // When the user clicks anywhere outside of the modal, close it
+                window.onclick = function(event) {
+                  if (event.target == modal) {
+                    modal.style.display = "none";
+                  }
+                }
+            }
+        </script>
+    </body>
+</html>

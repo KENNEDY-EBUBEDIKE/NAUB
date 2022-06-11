@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes" />
+
+    <link rel="shortcut icon" type="image/jpg" href="{% static 'dashboard/imgs/naub.png' %}"/>
+
+    <link rel="stylesheet" href="{% static 'login/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'login/css/bootstrap.min.css' %}">
+    <title>NAUB|Login</title>
+
+    <style>
+        @media screen and (max-width: 1279px) {
+            .login-box {
+                margin-top: 45mm;
+                margin-left: 380px;
+            }
+        }
+        @media screen and (min-width: 1280px) {
+            .login-box {
+                margin-top: 45mm;
+                margin-left: 500px;
+            }
+        }
+        @media screen and (min-width: 1366px) {
+            .login-box {
+                margin-top: 45mm;
+                margin-left: 553px;
+            }
+        }
+
+        @media screen and (min-width: 1920px) {
+            .login-box {
+                margin-top: 270px;
+                margin-left: 740px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <main>
+        <nav class="navbar navbar-expand" aria-label="Second navbar example">
+            <div class="container">
+                <img src="{% static 'login/img/naub.png' %}" alt="" class="img1">
+              <a class="navbar-brand" href="#">NIGERIAN ARMY UNIVERSITY BIU</a>
+              <img src="{% static 'login/img/army_logo.png' %}" alt="" class="img1">
+            </div>
+        </nav>
+
+        <div class="row">
+            <div class="login-box col-sm-7">
+                <div class="col-sm-5">
+                {% if error_message %}
+                <div><h5 style="color:#ff0000">{{error_message}}</h5></div>
+                {% endif %}
+                <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+                    <h3 style="padding-top: 10px;"><strong>STAFF LOGIN</strong></h3>
+                    <div class="mb-3">
+                      <label for="Email" class="form-label" style="padding-left: 10px; margin-left: 12px; padding-top: 50px"><strong>Email</strong></label>
+                      <input type="email" name="email" class=" col-md-8" id="Email" style="margin-left: 20px;" aria-describedby="emailHelp" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="Password" class="form-label" style="padding-left: 10px"><strong>Password</strong></label>
+                      <input type="password" name="password" class=" col-md-8" id="Password" required>
+                    </div>
+                    <br>
+                    <div class="col text-center">
+                        <button type="submit" class="" id="submit-btn" style="margin-top: -5px">Login</button>
+                    </div>
+                    <br>
+                </form>
+            </div>
+            </div>
+
+            <div class="col-md-4"></div>
+        </div>
+    </main>
+    
+</body>
+</html>

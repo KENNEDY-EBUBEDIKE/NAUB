@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+<meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <meta name="revisit-after" content="1">x
+        <meta name="keywords" content="windows, linux, macintosh, solaris, freebsd">
+        <meta name="robots" content="index, follow">
+        <meta name="HandheldFriendly" content="true" />
+        <link rel="shortcut icon" type="image/jpg" href="{% static 'dashboard/imgs/naub.png' %}"/>
+        <title>Examination Attendance</title>
+
+        <link href="{% static 'attendance_sheet/css/bootstrap.me.css' %}" rel="stylesheet" />
+        <link href="{% static 'exam_approve/vendor/select2/select2.min.css' %}" rel="stylesheet" media="all">
+
+        <!-- Sweet Alert -->
+        <link href="{% static 'student_registration/css/sweetalert/sweetalert-borderless.css' %}" rel="stylesheet">
+        <script src="{% static 'student_registration/js/sweetalert2.min.js' %}"></script>
+
+        <!-- Animate -->
+        <link rel="stylesheet" href="{% static 'student_registration/css/animate.min.css' %}"/>
+
+
+        <style>
+            @media only screen and (max-width: 800px) {
+
+                .uname strong{
+                    display: none;
+                }
+            }
+
+            .delete-item{
+            display: flex;
+            flex-direction: row;
+            }
+
+            .delete-item img{
+                display: none;
+                vertical-align: middle;
+                line-height: 1;
+                cursor: pointer;
+                border: none;
+                background: none;
+            }
+
+            .delete-item h6{
+                padding-top: 5px;
+            }
+
+            .delete-item:hover h6{
+                transform: translateX(15px);
+                transition:  transform 0.4s;
+            }
+
+            .delete-item:hover img{
+                display: inline-block;
+            }
+        </style>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand" style="background: #1C3C3C; height: auto; color: white;">
+            <a class="navbar-brand" href="#" style="color: #ffffff; font-size: 20px;">
+                <img src="{% static 'dashboard/imgs/naub.png' %}" style="width: 50px; height: 50px; border-radius: 50%;" alt=""> ADMIN STAFF
+            </a>
+            <button class="btn btn-link btn-sm order-1 order-lg-0" style="color: white; font-size: 22px;" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
+
+            <!-- Navbar-->
+            <ul class="navbar-nav ml-auto ml-md-0" style="right: 3px; position: absolute;">
+                <li class="nav-item">
+                    <div class="nav-link" style="color: white; font-size: 18px;">
+                        {% if request.user.privilege == 1 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: FIRST CLASS
+                        {% elif request.user.privilege == 2 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: SECOND CLASS
+                        {% elif request.user.privilege == 3 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: THIRD CLASS
+                        {% elif request.user.privilege == 4 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: FOURTH CLASS
+                        {% elif request.user.privilege == 5 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: FIFTH CLASS
+                        {% endif %}
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle uname" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        style="color: white; font-size: 18px;">
+                        <i class="fas fa-envelope fa-fw"></i> {{request.user.email}}
+                        <i class="fas fa-user fa-fw"></i> <strong>{{request.user.profile.surname}}  {{request.user.profile.first_name}}</strong>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="#">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/users/logout">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading"></div>
+                            <a class="nav-link" href="/users/dashboard">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Dashboard
+                            </a>
+                            <div class="sb-sidenav-menu-heading">Interface</div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdmin" aria-expanded="false" aria-controls="collapseAdmin">
+                                <div class="sb-nav-link-icon"><i class="fas fa-address-card"></i></div>
+                                Manage Admin
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseAdmin" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege == 1 %}
+                                        <a class="nav-link" href="/users/admin-database">View Admin Database</a>
+                                    {% endif %}
+
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseStudent" aria-expanded="false" aria-controls="collapseStudent">
+                                <div class="sb-nav-link-icon"><i class="fas fa-address-card"></i></div>
+                                Manage Student
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseStudent" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 3 %}
+                                        <a class="nav-link" href="/students/student-database">View student's Database</a>
+                                        <a class="nav-link" href="/students/student-registration">Register students</a>
+                                        <a class="nav-link" href="/students/students-data-upload">Upload Students Data</a>
+                                    {% endif %}
+
+
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsestaff" aria-expanded="false" aria-controls="collapsestaff">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                                Manage Staff
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsestaff" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 2 %}
+                                        <a class="nav-link" href="/staff/staff-database">View staff Database</a>
+                                        <a class="nav-link" href="/staff/staff-registration">Register staff</a>
+                                        <a class="nav-link" href="/staff/staff-attendance-sheet">Staff Work Attendance</a>
+                                    {% endif %}
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCourses" aria-expanded="false" aria-controls="collapseCourses">
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                                Manage Courses
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseCourses" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 3 %}
+                                        <a class="nav-link" href="/students/courses-database">View Courses Database</a>
+                                        <a class="nav-link" href="/students/add-course">Add Courses</a>
+                                    {% endif %}
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseControl" aria-expanded="false" aria-controls="collapseControl">
+                                <div class="sb-nav-link-icon"><i class="fas fa-diagnoses"></i></div>
+                                Exam Control Center
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseControl" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 2 %}
+                                        <a class="nav-link" href="/exams/approve-exam">Approve Exam Requests</a>
+                                        <a class="nav-link" href="/exams/invigilator-attendance">Invigilator Attendance Sheet</a>
+                                        <a class="nav-link" href="/exams/request-exam">Request Exam</a>
+                                        <a class="nav-link" href="/exams/attendance">Examination Attendance Sheet</a>
+                                        <a class="nav-link" href="/exams/exam-malpractice">Examination Malpractice</a>
+                                        <a class="nav-link" href="/exams/check-course">Start Exams</a>
+                                    {% elif request.user.privilege <= 3 %}
+                                        <a class="nav-link" href="/exams/request-exam">Request Exam</a>
+                                        <a class="nav-link" href="/exams/attendance">Examination Attendance Sheet</a>
+                                        <a class="nav-link" href="/exams/exam-malpractice">Examination Malpractice</a>
+                                    {% endif %}
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small">Logged in as:</div>
+                        {{request.user.profile.designation}}
+                    </div>
+                </nav>
+            </div>
+
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid">
+                        <h1 class="mt-4">STUDENTS ATTENDANCE SHEET</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item"><a href="/users/dashboard">Dashboard</a></li>
+                            <li class="breadcrumb-item">attendance sheet</li>
+                        </ol>
+
+                        <div class="card-body">
+                            <form id="att-filt-form" method="POST" > {% csrf_token %}
+                                <div class="input-group mb-5">
+
+                                    <div class="rs-select2 js-select-simple select-search">
+                                        <select  name="course" class="form-control col-md-10"  required aria-label="Course Code" aria-describedby="button-addon2">
+                                            <option disabled selected> Select Course </option>
+                                            {% for course in courses %}
+                                            <option> {{course.course_code}} </option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="select-dropdown"></div>
+                                    </div>
+
+                                    <div style="margin-left: 10px"></div>
+
+                                    <div class="rs-select2 js-select-simple select-search">
+                                        <select  name="faculty" class="form-control col-md-10"  aria-label="faculty" aria-describedby="button-addon2">
+                                            <option disabled selected> Select Faculty</option>
+                                            <option>ARTS, MANAGEMENT AND SOCIAL SCIENCE</option>
+                                            <option>ENGINEERING AND TECHNOLOGY</option>
+                                            <option>COMPUTING</option>
+                                            <option>NATURAL AND APPLIED SCIENCE</option>
+                                            <option>ENVIRONMENTAL SCIENCE</option>
+                                        </select>
+                                        <div class="select-dropdown"></div>
+                                    </div>
+
+                                    <div style="margin-left: 10px"></div>
+
+                                    <div class="rs-select2 js-select-simple select-search">
+                                        <select  name="level" class="form-control col-md-10"  aria-label="level" aria-describedby="button-addon2">
+                                            <option disabled selected> Select Level </option>
+                                            <option> 100 Level </option>
+                                            <option> 200 Level </option>
+                                            <option> 300 Level </option>
+                                            <option> 400 Level </option>
+                                            <option> 500 Level </option>
+                                        </select>
+                                        <div class="select-dropdown"></div>
+                                    </div>
+
+                                    <div style="margin-left: 10px"></div>
+
+                                    <div class="input-group-append">
+                                      <button class="btn btn-primary" type="submit" id="button-addon2">FILTER <i class="fas fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <strong>{{current.course_code}}</strong> Examination Attendance List
+                            </div>
+                            <div class="card-body">
+                                <div class="table-reponsive" id="ttt">
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Matric Number</th>
+                                                <th>Name</th>
+                                                <th>Department</th>
+                                                <th>Faculty</th>
+                                                <th>Level</th>
+                                                <th>Sign-In Time</th>
+                                                <th>Sign-Out Time</th>
+                                                <th>Written Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for attendee in attendance %}
+                                            <tr>
+                                                <td class="delete-item">
+                                                    <a href="#"  onclick="deleteItem('{{attendee.pk}}')">
+                                                        <img src="{% static 'student_database/imgs/close.svg' %}" width="30px" alt="">
+                                                    </a>
+                                                    <h6>
+                                                        <a href="{{attendee.student.get_student_profile_url}}">{{attendee.student.matric_number}}</a>
+                                                    </h6>
+                                                </td>
+                                                <td>{{attendee.student.surname}}  {{attendee.student.first_name}}</td>
+                                                <td>{{attendee.student.department}}</td>
+                                                <td>{{attendee.student.faculty}}</td>
+                                                <td>{{attendee.student.level}}</td>
+                                                <td>{{attendee.sign_in_time}}</td>
+                                                <td>{{attendee.sign_out_time}}</td>
+                                                <td>{{attendee.has_written}}</td>  <!-- <a href="{{attendee.get_delete_attendance_url}}"><button class="btn btn-danger" type="button" >DELETE <i class="fas fa-cut"></i></button></a></td> -->
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                    <form method="post" id="export"> {% csrf_token %}
+                                        <input type="hidden" name="course" value="{{current.course_code}}">
+                                        <input type="hidden" name="faculty" value="{{faculty}}">
+                                        <input type="hidden" name="level" value="{{level}}">
+                                        <input type="hidden" name="export" value="True">
+                                        <center style="color:white"><button type="submit" class="btn btn-info">Export</button></center>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+<!--                        <iframe id="print-iframe" width="0" height="0"></iframe>-->
+                    </div>
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; <a href="#">Naub.edu.ng</a> 2020</div>
+                            <div>
+                                <a href="#">Privacy Policy</a>
+                                &middot;
+                                <a href="#">Terms &amp; Conditions</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Jquery JS-->
+        <script src="{% static 'exam_approve/vendor/jquery/jquery.min.js' %}"></script>
+
+        <script src="{% static 'attendance_sheet/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'attendance_sheet/js/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'attendance_sheet/js/dataTables.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'attendance_sheet/js/scripts.js' %}"></script>
+        <script src="{% static 'attendance_sheet/js/font.all.min.js' %}"></script>
+
+
+        <!-- Vendor JS-->
+        <script src="{% static 'exam_approve/vendor/select2/select2.min.js' %}"> </script>
+        <script src="{% static 'exam_approve/js/global.js' %}"></script>
+
+        <script>
+
+            function deleteItem(pk){
+                event.preventDefault()
+                swal.fire({
+                    title: "Are you sure?",
+                    text: "You are about to Delete this Attendance!",
+                    icon: "warning",
+
+                    showCancelButton: true,
+                    cancelButtonColor: "#ad220d",
+                    cancelButtonText: "No, cancel out!",
+
+                    confirmButtonText: "Yes, Delete it!",
+                    confirmButtonColor: "#5f9771",
+
+                    animation: true,
+                    showClass: {
+                        popup: 'animate__animated animate__backInLeft'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__backOutRight'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/exams/delete-attendance/${pk}/`,
+                            type: 'GET',
+                            header: {'X-CSRFTOKEN': '{% csrf_token %}'},
+                            success: function (response){
+                                Swal.fire({
+                                    title: "Removed!",
+                                    text: "Record Deleted Successfully!!!",
+                                    icon: "success",
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    showClass: {
+                                        popup: 'animate__animated animate__jackInTheBox'
+                                    },
+                                    hideClass: {
+                                        popup: 'animate__animated animate__backOutRight'
+                                    }
+                                })
+                                .then(() => {
+                                window.location.reload(true);
+                                });
+                            },
+                        })
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire({
+                            title:'Cancelled',
+                            text:'Delete Operation Canceled',
+                            icon:'error',
+                            showConfirmButton: false,
+                            timer: 2000,
+
+                            showClass: {
+                                popup: 'animate__animated animate__jackInTheBox'
+                            },
+                            hideClass: {
+                                popup: 'animate__animated animate__backOutRight'
+                            }
+                        })
+                    }
+                })
+            }
+        </script>
+
+    </body>
+</html>

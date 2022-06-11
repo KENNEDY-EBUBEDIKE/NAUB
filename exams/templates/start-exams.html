@@ -1,0 +1,68 @@
+
+{% extends 'base.html' %}
+{% block title %}
+    <title>EXAM CONTROL CENTRE</title>
+{% endblock %}
+
+
+{% block content %}
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">Control Center</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item">Control Center</li>
+            </ol>
+            <div class="card mb-4">
+                <div class="card-header">
+                    Exam Control Center
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="." onsubmit="makeRequest()" > {% csrf_token %}
+                        <div class="input-group mb-3 col">
+                            <div class="input-group-prepend">
+                              <button class="btn btn-info" type="submit" onclick="btn_color()" id="button-addon1 ch">START</button>
+                            </div>
+                            <label for="inputGroupSelect01"></label><select name="current_exam" class="form-control col-2" id="inputGroupSelect01" aria-describedby="button-addon1">
+                                <option selected disabled>SELECT COURSE</option>
+                                {% for course in courses %}
+                                <option>{{course.course_code}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+               <a href="/exams/exam-profile-view/" type="button" class="btn btn-success" id="scan-button" style="display: none">SCAN</a>
+            </div>
+        </div>
+    </main>{% csrf_token %}
+
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+</script>
+<script type="text/javascript">
+    function makeRequest(){
+        event.preventDefault()
+        data = document.querySelector('#inputGroupSelect01').value
+        $.ajax({
+            url: "/exams/check-course/",
+            type: 'POST',
+            data: {"current_exam": data, },
+            dataType: "json",
+            headers: {'X-CSRFToken': csrftoken},
+            success: function (response){
+                if (response.message === "EXAM APPROVED"){
+                    window.location.href = window.location.origin += '/exams/exam-profile-view/?current_exam=' + response.course.course_code
+                }else{
+                    alert(response.response)
+                }
+            },
+        })
+    }
+
+</script>
+
+{% endblock %}

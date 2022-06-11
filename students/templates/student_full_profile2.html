@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+{% load static %}
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <meta name="revisit-after" content="1">x
+        <meta name="keywords" content="windows, linux, macintosh, solaris, freebsd">
+        <meta name="robots" content="index, follow">
+        <meta name="HandheldFriendly" content="true" />
+        <link rel="shortcut icon" type="image/jpg" href="{% static 'dashboard/imgs/favicon.ico' %}"/>
+        <title>Students Profile</title>
+
+
+        <link href="{% static 'full_profile2/css/mystyle.css' %}" rel="stylesheet" />
+        <link href="{% static 'full_profile2/css/bootstrap.me.css' %}" rel="stylesheet" />
+        <link href="{% static 'student_registration/css/sweetalert/sweetalert-borderless.css' %}" rel="stylesheet"/>
+        <link href="{% static 'student_registration/css/animate.min.css' %}" rel="stylesheet"/>
+
+        <script src="{% static 'full_profile2/js/jquery.min.js' %}"></script>
+        <script src="{% static 'student_registration/js/sweetalert2.min.js' %}"></script>
+        <script src="{% static 'full_profile2/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'student_registration/js/global.js' %}"></script>
+
+        <style>
+
+            @media only screen and (max-width: 800px) {
+
+                .uname strong{
+                    display: none;
+                }
+            }
+
+            .animate-slideInLeft {
+              position: relative;
+              -webkit-animation-name: slideinleft;
+              -webkit-animation-duration: 0.5s;
+              animation-name: slideinleft;
+              animation-duration: 0.5s
+            }
+
+            @-webkit-keyframes slideinleft {
+              from { left:-300px; opacity:0 }
+              to { left:0px; opacity:1 }
+            }
+
+            @keyframes slideinleft {
+              from{ left:-300px; opacity:0 }
+              to{ left:0px; opacity:1 }
+            }
+
+            .animate-slideOutLeft {
+              position: relative;
+              -webkit-animation-name: slideoutleft;
+              -webkit-animation-duration: 0.5s;
+              animation-name: slideoutleft;
+              animation-duration: 0.5s
+            }
+
+            @-webkit-keyframes slideoutleft {
+              from { left:0px; opacity:0 }
+              to { left:-100px; opacity:1 }
+            }
+
+            @keyframes slideoutleft {
+              from{ left:0px; opacity:0 }
+              to{ left:-100px; opacity:1 }
+            }
+
+            .animate-slideInRight {
+              position: relative;
+              -webkit-animation-name: slideinright;
+              -webkit-animation-duration: 0.5s;
+              animation-name: slideinright;
+              animation-duration: 0.5s
+            }
+
+            @-webkit-keyframes slideinright {
+              from { right:-300px; opacity:0 }
+              to { right:0px; opacity:1 }
+            }
+
+
+            @keyframes slideinright {
+              from { right:-300px; opacity:0 }
+              to { right:0px; opacity:1 }
+            }
+
+
+            .lds-dual-ring {
+              display: inline-block;
+              width: 80px;
+              height: 80px;
+            }
+            .lds-dual-ring:after {
+              content: " ";
+              display: block;
+              width: 64px;
+              height: 64px;
+              margin: 8px;
+              border-radius: 50%;
+              border: 6px solid #fcf;
+              border-color: red transparent red transparent;
+              animation: lds-dual-ring 1.2s linear infinite;
+            }
+            @keyframes lds-dual-ring {
+              0% {
+                transform: rotate(0deg);
+              }
+              100% {
+                transform: rotate(720deg);
+              }
+            }
+
+            .delete-item{
+            display: flex;
+            flex-direction: row;
+            }
+
+            .delete-item img{
+                display: none;
+                vertical-align: middle;
+                line-height: 1;
+                cursor: pointer;
+                border: none;
+                background: none;
+            }
+
+            .delete-item h6{
+                padding-top: 5px;
+            }
+
+            .delete-item:hover h6{
+                transform: translateX(15px);
+                transition:  transform 0.4s;
+            }
+
+            .delete-item:hover img{
+                display: inline-block;
+            }
+        </style>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand" style="background: #1C3C3C; height: auto; color: white;">
+            <a class="navbar-brand" href="#" style="color: #ffffff; font-size: 20px;">
+                <img src="{% static 'dashboard/imgs/naub.png' %}" style="width: 50px; height: 50px; border-radius: 50%;" alt=""> ADMIN STAFF
+            </a>
+            <button class="btn btn-link btn-sm order-1 order-lg-0" style="color: white; font-size: 22px;" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
+
+            <!-- Navbar-->
+            <ul class="navbar-nav ml-auto ml-md-0" style="right: 3px; position: absolute;">
+                <li class="nav-item">
+                    <div class="nav-link" style="color: white; font-size: 18px;">
+                        {% if request.user.privilege == 1 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: FIRST CLASS
+                        {% elif request.user.privilege == 2 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: SECOND CLASS
+                        {% elif request.user.privilege == 3 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: THIRD CLASS
+                        {% elif request.user.privilege == 4 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: FOURTH CLASS
+                        {% elif request.user.privilege == 5 %}
+                            <i class="fas fa-unlock-alt"></i>PRIVILEGE:: FIFTH CLASS
+                        {% endif %}
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle uname" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        style="color: white; font-size: 18px;">
+                        <i class="fas fa-envelope fa-fw"></i> {{request.user.email}}
+                        <i class="fas fa-user fa-fw"></i> <strong>{{request.user.profile.surname}}  {{request.user.profile.first_name}}</strong>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="#">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/users/logout">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading"></div>
+                            <a class="nav-link" href="/users/dashboard">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Dashboard
+                            </a>
+                            <div class="sb-sidenav-menu-heading">Interface</div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdmin" aria-expanded="false" aria-controls="collapseAdmin">
+                                <div class="sb-nav-link-icon"><i class="fas fa-address-card"></i></div>
+                                Manage Admin
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseAdmin" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege == 1 %}
+                                        <a class="nav-link" href="/users/admin-database">View Admin Database</a>
+                                    {% endif %}
+
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseStudent" aria-expanded="false" aria-controls="collapseStudent">
+                                <div class="sb-nav-link-icon"><i class="fas fa-address-card"></i></div>
+                                Manage Student
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseStudent" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 3 %}
+                                        <a class="nav-link" href="/students/student-database">View student's Database</a>
+                                        <a class="nav-link" href="/students/student-registration">Register students</a>
+                                        <a class="nav-link" href="/students/students-data-upload">Upload Students Data</a>
+                                    {% endif %}
+
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsestaff" aria-expanded="false" aria-controls="collapsestaff">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                                Manage Staff
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsestaff" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 2 %}
+                                        <a class="nav-link" href="/staff/staff-database">View staff Database</a>
+                                        <a class="nav-link" href="/staff/staff-registration">Register staff</a>
+                                        <a class="nav-link" href="/staff/staff-attendance-sheet">Staff Work Attendance</a>
+                                    {% endif %}
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCourses" aria-expanded="false" aria-controls="collapseCourses">
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                                Manage Courses
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseCourses" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 3 %}
+                                        <a class="nav-link" href="/students/courses-database">View Courses Database</a>
+                                        <a class="nav-link" href="/students/add-course">Add Courses</a>
+                                    {% endif %}
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseControl" aria-expanded="false" aria-controls="collapseControl">
+                                <div class="sb-nav-link-icon"><i class="fas fa-diagnoses"></i></div>
+                                Exam Control Center
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseControl" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    {% if request.user.privilege <= 2 %}
+                                        <a class="nav-link" href="/exams/approve-exam">Approve Exam Requests</a>
+                                        <a class="nav-link" href="/exams/invigilator-attendance">Invigilator Attendance Sheet</a>
+                                        <a class="nav-link" href="/exams/request-exam">Request Exam</a>
+                                        <a class="nav-link" href="/exams/attendance">Examination Attendance Sheet</a>
+                                        <a class="nav-link" href="/exams/exam-malpractice">Examination Malpractice</a>
+                                    {% elif request.user.privilege <= 3 %}
+                                        <a class="nav-link" href="/exams/request-exam">Request Exam</a>
+                                        <a class="nav-link" href="/exams/attendance">Examination Attendance Sheet</a>
+                                        <a class="nav-link" href="/exams/exam-malpractice">Examination Malpractice</a>
+                                    {% endif %}
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small">Logged in as:</div>
+                        {{request.user.profile.designation}}
+                    </div>
+                </nav>
+            </div>
+
+            <div id="layoutSidenav_content">
+                <div class="container emp-profile animate-slideInRight" id="profileContainer" style="display: block">
+
+                        <div class="alert-heading col-md-6" style="display: none" id="errorContainer">
+                            <div class="alert-danger alert-msg " id="subErrorContainer">
+                                <h5 style="font-weight: bold; margin-left: 50px;"><span id="errorRfidCode"></span> Belongs To <span id="errorSurname"></span>  <span id="errorFirstName"> </span></h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="profile-img">
+                                    {% if student.photo.url != None %}
+                                        <img src="{{ student.photo.url}}" alt=""/>
+                                    {% else %}
+                                        <img src="" alt=""/>
+                                    {% endif %}
+                                    <div class="file">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-head">
+                                    <h5>
+                                        {{student.surname}} {{student.first_name}} {{student.other_name}}
+                                    </h5>
+                                    <h6>
+                                        <span class="col-md-6">
+                                            {% if student.is_flaged != None %}
+                                                <a href="{{student.get_flag_student_url}}" type="button" class="btn btn-warning"><strong>UnFlag Student</strong></a>
+                                            {% else %}
+                                                <a type="button" class="btn btn-danger" data-toggle="modal" data-target="#firefoxModal"><strong style="color:white">Flag Student</strong></a>
+                                            {% endif %}
+                                            <a href="{{student.get_student_profile_update_url}}" class="btn btn-info" type="button"><strong>Edit Profile</strong></a>
+                                            <a href="" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateRfidModal" type="button"><strong>Update Rfid Code</strong></a>
+                                        </span>
+                                    </h6><br>
+                                    <div class="row">
+                                        <div>
+                                            <p class="proile-rating">RFID CODE : <span id="rfidCode">{{student.rfid_code}}</span></p>
+                                            <p class="proile-rating">Last Scan : <span>{{student.last_scan}}</span><a href="#"><span onclick="switchToScanHistoryPage()" style="color: #4747d7; margin: 8px;">View Scan History</span></a></p>
+                                            <p class="proile-rating">Registration Date : <span>{{student.reg_date}}</span></p>
+                                        </div>
+                                        <div style=" margin-left: 20mm;">
+                                            {% if student.is_flaged != None %}
+                                            <p><span style="font-size:50px; font-weight:bold; color:red">XXX </span> <span style="font-weight:bold;">Student is Flaged For <span style="color:blue">{{student.is_flaged}} </span>Reason</span> </p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="profile-head">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Bio Details</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="academic-details-tab" data-toggle="tab" href="#academic-details" role="tab" aria-controls="academic-details" aria-selected="false">Academic Details</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="courses-tab" data-toggle="tab" href="#courses" role="tab" aria-controls="courses" aria-selected="false">Registered Courses</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="tab-content profile-tab" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Date Of Birth</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.date_of_birth}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Gender</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.gender}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>State Of Origin</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.state_of_origin}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Local Govt Area</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.lga}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Phone Number</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.phone_number}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Resident Address</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.resident_address}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Email</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.email}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="academic-details" role="tabpanel" aria-labelledby="academic-details-tab">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Matric Number</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.matric_number}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Faculty</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.faculty}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Department</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.department}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Session</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.session}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Level</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{student.level}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="courses" role="tabpanel" aria-labelledby="courses-tab">
+                                        {% for course in offering %}
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label>{{course.course_code}}</label>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p>{{course.course_title}}</p>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                        <input onclick="switchToCoursePage()" type="button" value="Add/Remove Courses" class="btn btn-secondary">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+<!--                        flag Student Modal Start  -->
+
+                        <div class="modal fade" id="firefoxModal" tabindex="-1" role="dialog" aria-labelledby="firefoxModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h2>Flag Student</h2>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times</span>
+                                  </button>
+                                </div>
+                                <form method="POST" action="/students/flag-student/{{student.id}}/"> {% csrf_token %}
+                                    <div class="modal-body">
+                                        <div class="input-group form-inline">
+                                            <label for="reason" class="label">Reason For Flaging:</label>
+                                            <select class="custom-select " name="reason" id="reason">
+                                                <option selected disabled>Select Reason</option>
+                                                <option>SECURITY</option>
+                                                <option>MEDICAL</option>
+                                                <option>LIBRARY</option>
+                                                <option>Exam Malpractice</option>
+                                                <option>LOST/STOLEN CARD</option>
+                                                <option>OTHER</option>
+                                            </select>
+                                            <input type="text" placeholder="Other Reason" value="" name="other_reason">
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                      <button type="submit" class="btn btn-danger">Save changes</button>
+                                    </div>
+                                </form>
+                              </div>
+                            </div>
+                        </div>
+
+<!--                        flag Student Modal End  -->
+
+<!--                       RFID code Update Modal Start  -->
+
+                        <div class="modal fade" id="updateRfidModal" tabindex="-1" role="dialog" aria-labelledby="updateRfidModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h2>UPDATE RFID CODE</h2>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times</span>
+                                  </button>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button type="submit" class="btn btn-success" onclick="scanToUpdate()" data-dismiss="modal">Scan</button>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                </div>
+
+<!--                       RFID code Update Modal End  -->
+
+<!--                course Update Page Start    -->
+
+                <div class="container-fluid animate__animated animate__backInLeft" id="courseContainer" style="display: none"><br><br>
+                    <div class="row input-group mb-3" style="left: 40%">
+
+                        <label for="course-code">Course: </label>
+
+                        <div class="rs-select2 js-select-simple select-search">
+                            <select  id="course-code" name="course_code" class="form-control col-md-12"  aria-label="faculty" aria-describedby="button-addon2">
+                                <option selected disabled>Select Course</option>
+                                {% for c in all_courses %}
+                                    <option>{{c.course_code}}-{{c.credit_unit}} </option>
+                                {% endfor %}
+                            </select>
+                            <div class="select-dropdown"></div>
+                        </div>
+
+                        <input type="button" value="Add Course" class="btn btn-sm btn-success" onclick="addRow()" style="margin-left: 1%"> <br><br>
+                    </div>
+
+
+                        <table id="courses-table" class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Title</th>
+                                <th>Credit Unit</th>
+                                <th>Course Faculty</th>
+                                <th>Course Department</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td></td>
+                            </tr>
+                            {% for c in offering %}
+                                    <tr>
+<!--                                        <td><input type="button" value="Remove" class="btn btn-danger btn-sm" onclick="removeRow(this)"></td>-->
+                                        <td class="delete-item">
+                                            <img src="{% static 'student_database/imgs/close.svg' %}" width="30px" alt="" onclick="removeRow(this)">
+                                            <h6>{{c.course_code}}</h6>
+                                        </td>
+                                        <td>{{c.course_title}}</td>
+                                        <td>{{c.credit_unit}}</td>
+                                        <td>{{c.course_faculty}}</td>
+                                        <td>{{c.course_department}}</td>
+                                    </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <h2 style="font-size: x-large; text-align: right; margin-right: 20%; font-weight: bolder">Total Registered Unit: <span style="color: #1c8c; font-size: xxx-large;" id="totalUnit"> 0</span></h2>
+                    <div class="row" style="margin-left: 45%">
+                        <input type="button" class="btn btn-info" id="rtn-btn" value="Return" onclick="switchToProfilePage()">
+                        <input type="button" class="btn btn-warning" id="submit-btn" value="Register" onclick="submit()" style="margin-left: 5%">
+                    </div>
+                </div>
+
+<!--                <div class="lds-dual-ring" id="loader" style="display: block; margin-left: 48%; margin-top: 20%"></div>-->
+
+<!--                Course Update Page End    -->
+
+
+<!--               Scan History Page Start    -->
+                <div class="container-fluid animate__animated animate__backInLeft" id="ScanHistoryContainer" style="display: none">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-address-card mr-1"></i>
+                            {{student.surname}} {{student.first_name}}'s Scan History
+                        </div>
+                        <div class="card-body">
+                            <div class="table-reponsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Full Name</th>
+                                            <th>Date-Time</th>
+                                            <th>Location</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for record in scan_history %}
+                                        <tr>
+                                            <td>{{record.student.surname}}  {{record.student.first_name}}</td>
+                                            <td>{{record.scan_time}}</td>
+                                            <td>{{record.location}}</td>
+                                            <td>{{record.location}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <form method="post" id="export"> {% csrf_token %}
+                                    <input type="hidden" name="export" value="True">
+                                    <center style="color:white"><button onclick="switchToProfilePage2()" type="button" class="btn btn-secondary">Back</button> <button type="submit" class="btn btn-info">Export</button></center>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+<!--               Scan History Page End    -->
+
+
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; <a href="#">Naub.edu.ng</a> 2020</div>
+                            <div>
+                                <a href="#">Privacy Policy</a>
+                                &middot;
+                                <a href="#">Terms &amp; Conditions</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+
+        <script>
+
+            function updateTotalUnit(){
+                let table = document.getElementById('courses-table');
+                let tC = 0;
+                for (let r = 2; r <  table.rows.length; r++) {
+                    let cr = table.rows[r].cells[2].innerHTML;
+                    tC += Number(cr)
+                }
+                document.querySelector('#totalUnit').textContent = tC.toString()
+            }
+            updateTotalUnit()
+
+
+            function addRow() {
+                let course = document.getElementById('course-code');
+
+                if (course.value !== 'Select Course'){
+
+                    let table = document.getElementById('courses-table');
+
+                    let rowCnt = table.rows.length;
+                    let tr = table.insertRow(rowCnt);
+
+                    for (let c = 0; c < 5; c++) {
+                        let td = document.createElement('td');
+                        td = tr.insertCell(c);
+
+                        if (c === 2){
+                            td.innerHTML = course.value.split('-')[1]
+                        }else if (c === 0){
+                            td.setAttribute("class", "delete-item")
+                            let h6 = document.createElement('h6')
+                            h6.innerHTML = course.value.split('-')[0]
+
+                            let img = document.createElement("img")
+                            img.setAttribute("src", "{% static 'student_database/imgs/close.svg' %}")
+                            img.setAttribute("width", "30px")
+                            img.setAttribute("onclick", "removeRow(this)")
+                            img.setAttribute("alt", '')
+
+                            td.appendChild(img)
+                            td.appendChild(h6)
+
+                        } else{
+                            td.innerHTML = course.value.split('-')[0]
+                        }
+                    }
+                    updateTotalUnit()
+                }
+            }
+
+            function removeRow(oButton) {
+                let table = document.getElementById('courses-table');
+                table.deleteRow(oButton.parentNode.parentNode.rowIndex);
+                updateTotalUnit()
+            }
+
+            function submit(){
+                if (Number(document.querySelector('#totalUnit').textContent) > 24 ){
+                    alert("Sorry!, You cannot register more than 24 Unit courses")
+                } else {
+                    let table = document.getElementById('courses-table');
+                    let arrValues = [];
+
+                    for (let r = 2; r <  table.rows.length; r++) {
+                        arrValues.push(table.rows[r].cells[0].textContent.trim());
+                    }
+
+                    $.ajax({
+                        url: "/students/register-course/{{student.pk}}/",
+                        type: 'POST',
+                        data: {"course_offered": arrValues,},
+                        dataType: "json",
+                        header: {'X-CSRFTOKEN': '{% csrf_token %}'},
+                        success: function (response){
+
+                            Swal.fire({
+                                icon: "success",
+                                title: "Success!",
+                                text: "Courses Registered Successfully!!!",
+                                animation: true,
+                                showClass: {
+                                    popup: 'animate__animated animate__bounceIn'
+                                }
+                            })
+                            .then(() => {
+                              window.location.reload(true);
+                            });
+                        },
+                    })
+                }
+            }
+
+             function switchToCoursePage() {
+                 document.getElementById("courseContainer").style.display = "block";
+                 document.getElementById("profileContainer").style.display = "none";
+            }
+
+            function switchToProfilePage() {
+                 document.getElementById("courseContainer").style.display = "none";
+                 document.getElementById("profileContainer").style.display = "block";
+            }
+
+            function switchToScanHistoryPage() {
+                event.preventDefault()
+                 document.getElementById("ScanHistoryContainer").style.display = "block";
+                 document.getElementById("profileContainer").style.display = "none";
+            }
+
+            function switchToProfilePage2() {
+                 document.getElementById("ScanHistoryContainer").style.display = "none";
+                 document.getElementById("profileContainer").style.display = "block";
+            }
+        </script>
+
+
+        <script>
+          var firefoxTestDone = false
+          function reportFirefoxTestResult(result) {
+            if (!firefoxTestDone) {
+              $('#ff-bug-test-result')
+                .addClass(result ? 'text-success' : 'text-danger')
+                .text(result ? 'PASS' : 'FAIL')
+            }
+          }
+
+          $(function () {
+            $('[data-toggle="popover"]').popover()
+            $('[data-toggle="tooltip"]').tooltip()
+
+            $('#tall-toggle').click(function () {
+              $('#tall').toggle()
+            })
+
+            $('#ff-bug-input').one('focus', function () {
+              $('#firefoxModal').on('focus', reportFirefoxTestResult.bind(false))
+              $('#ff-bug-input').on('focus', reportFirefoxTestResult.bind(true))
+            })
+
+            $('#btnPreventModal').on('click', function () {
+              $('#firefoxModal').one('shown.bs.modal', function () {
+                $(this).modal('hide')
+              })
+              .one('hide.bs.modal', function (event) {
+                event.preventDefault()
+                if ($(this).data('bs.modal')._isTransitioning) {
+                  console.error('Modal plugin should not set _isTransitioning when hide event is prevented')
+                } else {
+                  console.log('Test passed')
+                  $(this).modal('hide') // work as expected
+                }
+              })
+              .modal('show')
+            })
+
+            // Test transition duration
+            var t0, t1;
+
+            $('#slowModal').on('shown.bs.modal', function(){
+              t1 = performance.now()
+              console.log('transition-duration took ' + (t1 - t0) + 'ms.')
+            }).on('show.bs.modal', function(){
+              t0 = performance.now()
+            })
+
+          })
+        </script>
+
+        <script>
+            function scanToUpdate(){
+                event.preventDefault()
+                let port, textEncoder, writableStreamClosed, writer;
+
+                async function connectSerial() {
+                    try {
+                        // Prompt user to select any serial port.
+                        port = await navigator.serial.requestPort();
+                        await port.open({ baudRate: "9600" });
+                        listenToPort();
+
+                        textEncoder = new TextEncoderStream();
+                        writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
+
+                        writer = textEncoder.writable.getWriter();
+                    } catch (e){
+                        alert(e + "Serial Connection Failed");
+                    }
+                }
+
+                let v = "";
+                async function listenToPort() {
+                    const textDecoder = new TextDecoderStream();
+                    const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+                    const reader = textDecoder.readable.getReader();
+
+                    // Listen to data coming from the serial device.
+                    while (true) {
+                        let { value, done } = await reader.read();
+                        if (done) {
+                            // Allow the serial port to be closed later.
+                            //reader.releaseLock();
+                            break;
+                        }
+                        // value is a string.
+                        var newLine = /\r\n|\r|\n/.exec(value);
+
+                        if (newLine){
+                            v += value;
+                            v.replace(/\r\n|\n|\r|\s/g, "")
+                            if (!v.replace(/\r\n|\n|\r|\s/g, "").length) {
+                              console.log("string only contains whitespace (ie. spaces, tabs or line breaks)");
+                            }else {
+                                if (v.length > 3){
+                                    makeRequest(v)
+                                }
+                            }
+                            v = "";
+                        }else{
+                            v += value;
+                        }
+                    }
+                }
+                async function sendSerialLine(data) {
+                    await writer.write(data);
+                    //await writer.releaseLock();
+                }
+
+                function makeRequest(value){
+                    $.ajax({
+                        url: "/students/update-rfid-code/{{student.id}}/",
+                        type: 'POST',
+                        data: {"code": value,},
+                        dataType: "json",
+                        header: {'X-CSRFTOKEN': '{% csrf_token %}'},
+                        success: function (response){
+                            if (response.status === "EXISTING"){
+                                document.querySelector('#errorContainer').style.display = 'block'
+                                document.querySelector('#errorFirstName').textContent = response.first_name
+                                document.querySelector('#errorRfidCode').textContent = response.rfid_code
+                                document.querySelector('#errorSurname').textContent = response.surname
+
+                            } else if (response.status === "SUCCESS"){
+                                Swal.fire({
+                                icon: "success",
+                                title: "Success!",
+                                text: "RFID Code Updated Successfully!!!",
+                                animation: true,
+                                showClass: {
+                                    popup: 'animate__animated animate__bounceIn'
+                                }
+                            })
+                            .then(() => {
+                                document.getElementById("rfidCode").textContent = response.rfid_code
+                                if (document.querySelector('#errorContainer').style.display === 'block'){
+                                    document.querySelector('#errorContainer').style.display = 'none'
+                                }
+                            });
+                            } else if (response.status === 'NOT ACTIVE'){
+                                document.querySelector('#errorContainer').style.display = 'block'
+                                document.querySelector('#subErrorContainer').innerHTML = '<h5>Sorry, This Student\'s Account is Deactivated</h5>'
+                            }
+                            v = ""
+                        },
+                    })
+                }
+                connectSerial()
+            }
+        </script>
+    </body>
+</html>

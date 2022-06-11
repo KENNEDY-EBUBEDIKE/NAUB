@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta name="revisit-after" content="1">x
+    <meta name="keywords" content="windows, linux, macintosh, solaris, freebsd">
+    <meta name="robots" content="index, follow">
+    <meta name="HandheldFriendly" content="true" />
+    <link rel="shortcut icon" type="image/jpg" href="{% static 'dashboard/imgs/naub.png' %}"/>
+
+    <link rel="stylesheet" href="{% static 'scan_profile/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'scan_profile/css/bootstrap.min.css' %}">
+    <title>NAUB</title>
+</head>
+<body>
+    <main>
+        <nav class="navbar navbar-expand" aria-label="Second navbar example">
+            <div class="container">
+                <img src="{% static 'scan_profile/img/naub.png' %}" alt="" class="img1">
+              <a class="navbar-brand" href="#">NIGERIAN ARMY UNIVERSITY BIU</a>
+              <img src="{% static 'scan_profile/img/army_logo.png' %}" alt="" class="img1">
+            </div>
+        </nav>
+
+
+        <br>
+        <div class="container">
+            <div class="row card-header" style="background-color:white;">
+                <h4 class="head-text">{{staff.surname}}  {{staff.first_name}} {{staff.other_name}}</h4>
+            </div>
+        </div><br>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="profile-img">
+                    {% if staff.photo.url != None %}
+                            <img src="{{ staff.photo.url }}" alt=""/>
+                    {% else %}
+                        <img src="" alt=""/>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <br><br>
+        <div class="container">
+            <div class="col-md-12">
+                <table class="table table-borderless">
+                <thead>
+                    <tr>
+                        <th>STAFF ID NUMBER</th>
+                        <th>DEPARTMENT</th>
+                        <th>DESIGNATION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{staff.staff_id_number}}</td>
+                        <td>{{staff.department}}</td>
+                        <td>{{staff.designation}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

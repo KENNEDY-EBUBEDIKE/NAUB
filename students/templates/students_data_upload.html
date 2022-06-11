@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<!--suppress HtmlUnknownTarget -->
+<title>NAUB | Students Data Upload</title>
+{% endblock %}
+
+{% block content %}
+
+    <main>
+        <div class="container-fluid">
+            <h2 class="mt-4">STUDENTS DATA UPLOAD</h2>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/users/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item">student's Data Upload</li>
+            </ol>
+
+            <h4 style="text-align: center"> UPLOAD FORMAT </h4>
+            <ol>
+                <li>The File must be in .csv Format</li>
+                <li>Use comma(,) as the Delimiter</li>
+                <li>Use (') to escape string characters</li>
+                <li>It must be Arranged in this manner:</li>
+                <p>Matric NO | surname | first name | other name | phone number | email | faculty | department | session | level | gender | date of birth | nationality | State of Origin | LGA</p>
+            </ol>
+
+            {% if error %}
+                <span style="color: red">ERROR!:</span><h6 style="font-weight: lighter; font-style: italic; color: #dc143c">{{error}}</h6>
+            {% elif message %}
+                <span style="color: darkgreen">SUCCESS!:</span><h6 style="font-weight: lighter; font-style: italic; color: green">{{message}}</h6>
+            {% endif %}
+
+
+
+            {% if duplicates %}
+                <h6>Few Issues:</h6>
+                <ol>
+                    {% for d in duplicates %}
+                        <li style="color: crimson">{{d}}</li>
+                    {% endfor %}
+                </ol>
+            {% endif %}
+
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" novalidate="" action="."> {% csrf_token %}
+                    <div class="input-group mb-5">
+
+                        <div class="form-row">
+
+                            <div style="margin-left: 10px"></div>
+                            <div class="value">
+                                <div class="input-group">
+                                    <div class="rs-select2 js-select-simple">
+                                        <input class="input--style-5 breadcrumb mb-2" type="file" name="data" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-left: 30px"></div>
+
+                            <div class="input-group-append">
+                              <button class="btn btn-success" type="submit" id="button-addon2" style="width: 20mm; height: 15mm;"><i class="fas fa-upload" style="width: 12mm; height: 12mm;"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+{% endblock %}

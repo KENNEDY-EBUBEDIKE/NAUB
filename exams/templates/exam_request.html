@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}
+    <title>EXAM CONTROL CENTRE</title>
+{% endblock %}
+
+
+{% block content %}
+
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">Control Center</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item">Control Center</li>
+            </ol>
+            <div class="card mb-4">
+                <div class="card-header">
+                    Exam Control Center
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="."> {% csrf_token %}
+                        <div class="input-group mb-3 col">
+                            <div class="input-group-prepend">
+                              <button class="btn btn-info" type="submit" onclick="btn_color()" id="button-addon1 ch">Request Approval</button>
+                            </div>
+                            <label for="inputGroupSelect01"></label><select name="course" class="form-control col-2" id="inputGroupSelect01" aria-describedby="button-addon1">
+                                <option selected disabled>SELECT COURSE</option>
+                                {% for course in courses %}
+                                <option>{{course.course_code}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+               <hr><h3 style="text-align: center">REQUESTS</h3><hr>
+
+                <table class="table table-bordered table-responsive-md " id="dataTable"  style="text-align: center;  width: 100%; mso-cellspacing: 0">
+                    <thead>
+                        <tr>
+                            <th>COURSE</th>
+                            <th>APPROVED START TIME</th>
+                            <th>APPROVED STOP TIME</th>
+                            <th>APPROVED BY</th>
+                            <th>REQUEST STATUS</th>
+                            <th colspan="6">APPROVED INVIGILATORS</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>{{exam_requests.invigilators.all}}
+                        {% for req in exam_requests %}
+                            <tr>
+                                <td>{{req.course.course_code}}</td>
+                                {% if req.status == 'APPROVED' %}
+                                    <td style="color:green">{{req.approved_start_time}}</td>
+                                    <td style="color:red">{{req.approved_stop_time}}</td>
+                                {% else %}
+                                    <td style="color:green">{{req.status}}</td>
+                                    <td style="color:red">{{req.status}}</td>
+                                {% endif %}
+                                <td>{{req.approved_by}}</td>
+
+                                {% if req.status == 'APPROVED' %}
+                                    <td><a role="button" class="btn btn-success"><strong style="color:white">{{req.status}}</strong></a></td>
+                                {% elif req.status == 'PENDING' %}
+                                    <td><a role="button" class="btn btn-warning"><strong style="color:white">{{req.status}}</strong></a></td>
+                                {% else %}
+                                    <td><a role="button" class="btn btn-danger"><strong style="color:white">{{req.status}}</strong></a></td>
+                                {% endif %}
+
+                                {% for i in req.invigilators.all %}
+                                    <td>{{i.first_name}}  {{i.surname}}</td>
+                                {% endfor%}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+{% endblock %}
