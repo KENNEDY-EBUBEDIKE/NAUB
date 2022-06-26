@@ -83,6 +83,7 @@ def register_student(request):
 def student_database(request):
 
     if request.user.privilege <= 3:
+        print("privileged user")
         all_students = students_profile_model.objects.all()
         if request.method == 'POST':
             if request.POST.get('export'):
