@@ -44,7 +44,7 @@
 
 
 # def solution(A):
-#     # write your code in Python 3.6
+
 #     multiples = [num for num in A if num % 4 == 0]
 #     result = sum(multiples)
 #     print(result)
@@ -90,3 +90,4 @@ def solution(A):
 
 
 print(solution([1,1,0,1,1,1]))
+

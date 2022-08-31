@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
-# kennedyeziechina@gmail.com
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -157,6 +157,7 @@ USE_TZ = True
 
 MEDIA_ROOT = BASE_DIR / 'media/'
 STATIC_ROOT = BASE_DIR / 'static/'
+
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
@@ -289,9 +290,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 #
 #
 # # For POST requests
-# CSRF_TRUSTED_ORIGINS = [
-#     'http://127.0.0.1',
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1',
+]
 
 
 # REST_FRAMEWORK = {

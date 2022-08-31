@@ -265,7 +265,7 @@
                     break;
                 }
                 // value is a string.
-                var newLine = /\r\n|\r|\n/.exec(value);
+                let newLine = /\r\n|\r|\n/.exec(value);
 
                 if (newLine){
                     v += value;
